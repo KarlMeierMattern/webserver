@@ -1,0 +1,49 @@
+Create: .nvmrc
+Add: 22.14.0 to .nvmrc
+Run: nvm install
+Run: nvm use
+Run: npm init -y
+
+Run: npm install -D typescript @types/node
+Adds TypeScript along with types for node
+
+Add: tsconfig.json
+Configure: tsconfig.json
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+rootDir is where your TypeScript files are located
+outDir is where your compiled JavaScript files will go (you won't modify these - they're generated from your TypeScript files)
+include specifies the files to include in the compilation
+exclude specifies the files to exclude from the compilation
+strict enables all strict type checking options
+esModuleInterop allows you to use ES module syntax
+moduleResolution specifies how modules are resolved
+skipLibCheck skips type checking all declaration files
+
+Configure package.json
+add "type":"module". This means we can use the ES module syntax in our project for imports and exports.
+add a build script that runs npx tsc - this will compile your TypeScript code to JavaScript.
+add a start script that runs node dist/index.js - this will start the REPL.
+add a dev script that runs a combination of the build and start scripts for convenience.
+
+The npx command allows us to run the tsc command without installing TypeScript globally.
+
+Add: src folder at root
+
+Add: npm i express
+Add: npm i -D @types/express
+
+Add: index.ts in the src folder

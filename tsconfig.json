@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+/*
+rootDir is where your TypeScript files are located
+outDir is where your compiled JavaScript files will go (you won't modify these - they're generated from your TypeScript files)
+include specifies the files to include in the compilation
+exclude specifies the files to exclude from the compilation
+strict enables all strict type checking options
+esModuleInterop allows you to use ES module syntax
+moduleResolution specifies how modules are resolved
+skipLibCheck skips type checking all declaration files
+*/
