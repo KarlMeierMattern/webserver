@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { filterChirp } from "../lib/filter.js";
+import { BadRequestError } from "../lib/error.js";
 
 export const handlerValidateChirp = (req: Request, res: Response) => {
   const { body } = req.body; // express.json() middleware parses the body
@@ -12,8 +13,9 @@ export const handlerValidateChirp = (req: Request, res: Response) => {
   }
 
   if (fileteredChirp.length > 140) {
-    res.status(400).json({ error: "Chirp is too long" });
-    return;
+    throw new BadRequestError("Chirp is too long. Max length is 140");
+    // res.status(400).json({ error: "Chirp is too long" });
+    // return;
   }
 
   res.status(200).json({ cleanedBody: fileteredChirp });
