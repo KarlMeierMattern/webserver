@@ -15,6 +15,13 @@
       "when": 1779021541040,
       "tag": "0001_glamorous_harpoon",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779110148640,
+      "tag": "0002_nostalgic_talos",
+      "breakpoints": true
     }
   ]
 }

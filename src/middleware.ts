@@ -35,7 +35,7 @@ export const middlewareErrorHandler = (
   error: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   console.error(`Error processing ${req.method} ${req.url}:`, error);
   if (error instanceof BadRequestError) {

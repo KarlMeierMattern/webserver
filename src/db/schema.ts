@@ -9,6 +9,7 @@ export const users = pgTable("users", {
     .defaultNow()
     .$onUpdate(() => new Date()), // sets the updatedAt field to a default value whenever the row is updated
   email: varchar("email", { length: 256 }).unique().notNull(),
+  hashedPassword: varchar("hashed_password"), // allow existing users to have no password
 });
 
 // $inferInsert is a helper type that infers the type of the object you would pass to the insert function.

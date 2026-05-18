@@ -1,23 +1,40 @@
 import { Request, Response } from "express";
 import { BadRequestError } from "../lib/error.js";
 import { createUser } from "../db/queries/users.js";
+import { hashPassword } from "../auth.js";
+import { NewUser } from "../db/schema.js";
+
+type params = {
+  email: string;
+  password: string;
+};
+
+type UserResponse = Omit<NewUser, "password">;
 
 export const handlerCreateUser = async (req: Request, res: Response) => {
-  type params = {
-    email: string;
-  };
+  const { email, password }: params = req.body;
 
-  const { email }: params = req.body;
-
-  if (!email) {
-    throw new BadRequestError("Email is required");
+  if (!email || !password) {
+    throw new BadRequestError("Email and password are required");
   }
 
-  const newUser = await createUser({ email });
+  const hashedPassword = await hashPassword(password);
+
+  if (!hashedPassword) {
+    throw new BadRequestError("Failed to hash password");
+  }
+
+  const newUser = await createUser({ email, hashedPassword: hashedPassword });
 
   if (!newUser) {
     throw new Error("Failed to create user");
   }
+  const userResponse: UserResponse = {
+    id: newUser.id,
+    createdAt: newUser.createdAt,
+    updatedAt: newUser.updatedAt,
+    email: newUser.email,
+  };
 
-  return res.status(201).json(newUser);
+  return res.status(201).json(userResponse);
 };
