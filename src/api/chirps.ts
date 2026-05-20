@@ -1,35 +1,40 @@
 import { Request, Response } from "express";
 import { filterChirp } from "../lib/filter.js";
-import { BadRequestError } from "../lib/error.js";
+import {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+} from "../lib/error.js";
 import { createChirps, getChirps, getChirp } from "../db/queries/chirps.js";
+import { validateJWT, getBearerToken } from "../auth.js";
+import { config } from "../config.js";
 
 export const handlerCreateChirp = async (req: Request, res: Response) => {
   type params = {
     body: string;
-    userId: string;
   };
 
-  const { body, userId }: params = req.body; // express.json() middleware parses the body
+  const { body }: params = req.body; // express.json() middleware parses the body
+  const token = getBearerToken(req);
 
   if (!body || typeof body !== "string") {
     throw new BadRequestError("Body is required and must be a string");
   }
 
-  if (!userId || typeof userId !== "string") {
-    throw new BadRequestError("userId is required and must be a string");
+  if (!token) {
+    throw new ForbiddenError("Authorization token is required");
+  }
+
+  const userId = await validateJWT(token, config.jwt.secret);
+
+  if (!userId) {
+    throw new UnauthorizedError("Invalid token");
   }
 
   const fileteredChirp = filterChirp(body);
 
-  //   if (typeof fileteredChirp !== "string") {
-  //     res.status(400).json({ error: "Body must be a string" });
-  //     return;
-  //   }
-
   if (fileteredChirp.length > 140) {
     throw new BadRequestError("Chirp is too long. Max length is 140");
-    // res.status(400).json({ error: "Chirp is too long" });
-    // return;
   }
 
   const result = await createChirps({ body, userId });

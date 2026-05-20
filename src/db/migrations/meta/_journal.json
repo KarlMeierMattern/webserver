@@ -22,6 +22,20 @@
       "when": 1779110148640,
       "tag": "0002_nostalgic_talos",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1779276273911,
+      "tag": "0003_grey_tana_nile",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779277516040,
+      "tag": "0004_dry_thor",
+      "breakpoints": true
     }
   ]
 }

@@ -105,3 +105,13 @@ Create a file called index.ts in the src/db directory to set up your database co
 We'll use this db object to run queries against the database.
 
 Create a src/db/queries directory to store your queries.
+
+Install JWT libraries
+Run: npm i jsonwebtoken
+Run: npm i -D @types/jsonwebtoken
+
+Install test suite
+Run: npm i -D vitest@3
+
+Add the "test": "vitest --run" to package.json in the "scripts" object.
+Create an auth.test.ts file. Vitest will automatically run any files with the .test.ts extension.
