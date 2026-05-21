@@ -1,5 +1,11 @@
-import { foreignKey } from "drizzle-orm/gel-core";
-import { pgTable, timestamp, varchar, uuid, text } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  timestamp,
+  varchar,
+  uuid,
+  text,
+  boolean,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -10,6 +16,7 @@ export const users = pgTable("users", {
     .$onUpdate(() => new Date()), // sets the updatedAt field to a default value whenever the row is updated
   email: varchar("email", { length: 256 }).unique().notNull(),
   hashedPassword: varchar("hashed_password"), // allow existing users to have no password
+  isChirpyRed: boolean("is_chirpy_red").notNull().default(false),
 });
 
 // $inferInsert is a helper type that infers the type of the object you would pass to the insert function.
@@ -28,6 +35,7 @@ export const chirps = pgTable("chirps", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 });
+11;
 
 export type NewChirp = typeof chirps.$inferInsert;
 

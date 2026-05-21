@@ -64,6 +64,7 @@ export const handlerLogin = async (req: Request, res: Response) => {
     email: user.email,
     token: accessToken,
     refreshToken: refreshToken,
+    isChirpyRed: user.isChirpyRed,
   };
 
   return res.status(200).json(userResponse);

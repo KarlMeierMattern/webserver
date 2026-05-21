@@ -10,7 +10,7 @@ import {
 import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
-import { handlerCreateUser } from "./api/users.js";
+import { handlerCreateUser, handlerUpdateUser } from "./api/users.js";
 import {
   handlerLogin,
   handlerRefreshAccessToken,
@@ -21,7 +21,9 @@ import {
   handlerCreateChirp,
   handlerGetChirps,
   handlerGetChirp,
+  handlerDeleteChirp,
 } from "./api/chirps.js";
+import { handlerPolkaEvent } from "./api/webhooks.js";
 import { config } from "./config.js";
 
 // Ensures the database will be up-to-date whenever you start the server.
@@ -43,8 +45,11 @@ app.post("/api/login", handlerLogin); // jwt created
 app.post("/api/chirps", handlerCreateChirp); // jwt validated, chirp created
 app.get("/api/chirps", handlerGetChirps);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
-app.post("/api/refresh", handlerRefreshAccessToken); //
+app.delete("/api/chirps/:chirpId", handlerDeleteChirp);
+app.post("/api/refresh", handlerRefreshAccessToken);
 app.post("/api/revoke", handlerRevokeRefreshToken);
+app.put("/api/users", handlerUpdateUser);
+app.post("/api/polka/webhooks", handlerPolkaEvent);
 
 // admin routes
 app.post("/admin/reset", handlerReset);

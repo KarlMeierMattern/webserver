@@ -3,8 +3,7 @@ import { NewUser, users } from "../schema.js";
 import { eq } from "drizzle-orm";
 
 export async function createUser(user: NewUser) {
-  // Array destructuring is used to get the first item from the returned array.
-  // This is because drizzle returns an array of results, even if there is only one result.
+  // Drizzle returns an array of results, even if there is only one result - array destructuring is used to get the first item
   const [result] = await db
     .insert(users)
     .values(user)
@@ -19,5 +18,29 @@ export async function deleteAllUsers() {
 
 export const getUserByEmail = async (email: string) => {
   const [result] = await db.select().from(users).where(eq(users.email, email));
+  return result;
+};
+
+export const updateUser = async (user: {
+  id: string;
+  email: string;
+  hashedPassword: string;
+}) => {
+  // Drizzle returns an array of results, even if there is only one result - array destructuring is used to get the first item
+  const [result] = await db
+    .update(users)
+    .set({ email: user.email, hashedPassword: user.hashedPassword })
+    .where(eq(users.id, user.id))
+    .returning();
+  return result;
+};
+
+export const upgradeUser = async (userId: string) => {
+  const [result] = await db
+    .update(users)
+    .set({ isChirpyRed: true })
+    .where(eq(users.id, userId))
+    .returning();
+
   return result;
 };

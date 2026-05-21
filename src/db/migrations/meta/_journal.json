@@ -36,6 +36,13 @@
       "when": 1779277516040,
       "tag": "0004_dry_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1779363702010,
+      "tag": "0005_wise_master_chief",
+      "breakpoints": true
     }
   ]
 }

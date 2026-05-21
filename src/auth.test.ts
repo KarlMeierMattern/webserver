@@ -5,6 +5,7 @@ import {
   makeJWT,
   validateJWT,
   extractBearerToken,
+  extractApiKey,
 } from "./auth.js";
 import { BadRequestError } from "./lib/error.js";
 
@@ -72,5 +73,18 @@ describe("extract bearer token", () => {
   it("should extract the token from the header", () => {
     const header = "";
     expect(() => extractBearerToken(header)).toThrow(BadRequestError);
+  });
+});
+
+describe("extract api key", () => {
+  it("should extract the api key from the headers", () => {
+    const apiKey = "12345";
+    const header = `ApiKey ${apiKey}`;
+    expect(extractApiKey(header)).toBe(apiKey);
+  });
+
+  it("should extract the api key from the headers", () => {
+    const header = `ApiKey`;
+    expect(() => extractApiKey(header)).toThrow(BadRequestError);
   });
 });
