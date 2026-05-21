@@ -27,7 +27,7 @@ import { handlerPolkaEvent } from "./api/webhooks.js";
 import { config } from "./config.js";
 
 // Ensures the database will be up-to-date whenever you start the server.
-const migrationClient = postgres(config.db.url, { max: 1 });
+const migrationClient = postgres(config.db.url, { max: 1, onnotice: () => {} });
 await migrate(drizzle(migrationClient), config.db.migrationConfig);
 
 const app = express();
@@ -40,15 +40,18 @@ app.use("/app", middlewareMetricsInc, express.static("./src/app")); // express m
 // express app object takes a path and handler function
 app.get("/api/healthz", handlerReadiness);
 app.post("/api/validate_chirp", handlerValidateChirp);
+
 app.post("/api/users", handlerCreateUser);
-app.post("/api/login", handlerLogin); // jwt created
+app.put("/api/users", handlerUpdateUser);
+
 app.post("/api/chirps", handlerCreateChirp); // jwt validated, chirp created
 app.get("/api/chirps", handlerGetChirps);
 app.get("/api/chirps/:chirpId", handlerGetChirp);
 app.delete("/api/chirps/:chirpId", handlerDeleteChirp);
+
+app.post("/api/login", handlerLogin); // jwt created
 app.post("/api/refresh", handlerRefreshAccessToken);
 app.post("/api/revoke", handlerRevokeRefreshToken);
-app.put("/api/users", handlerUpdateUser);
 app.post("/api/polka/webhooks", handlerPolkaEvent);
 
 // admin routes

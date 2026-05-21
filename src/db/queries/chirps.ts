@@ -32,3 +32,7 @@ export const deleteChirp = async (chirpId: string) => {
     .where(eq(chirps.id, chirpId))
     .returning();
 };
+
+export const getChirpsByUser = async (userId: string) => {
+  return await db.select().from(chirps).where(eq(chirps.userId, userId));
+};

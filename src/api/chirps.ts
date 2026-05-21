@@ -11,6 +11,7 @@ import {
   getChirps,
   getChirp,
   deleteChirp,
+  getChirpsByUser,
 } from "../db/queries/chirps.js";
 import { validateJWT, getBearerToken } from "../auth.js";
 import { config } from "../config.js";
@@ -51,13 +52,26 @@ export const handlerCreateChirp = async (req: Request, res: Response) => {
 };
 
 // GET /api/chirps
-export const handlerGetChirps = async (_req: Request, res: Response) => {
-  const result = await getChirps();
+export const handlerGetChirps = async (req: Request, res: Response) => {
+  type params = {
+    authorId: string;
+    sort: "asc" | "desc";
+  };
 
-  if (!result) {
+  const { authorId, sort }: params = req.query as params;
+
+  const chirps = authorId ? await getChirpsByUser(authorId) : await getChirps();
+
+  if (!chirps) {
     throw new BadRequestError("Failed to get chirps");
   }
-  return res.status(200).json(result);
+
+  chirps.sort((a, b) => {
+    const cmp = a.createdAt < b.createdAt ? -1 : 1;
+    return sort === "asc" ? cmp : -cmp;
+  });
+
+  return res.status(200).json(chirps);
 };
 
 // GET /api/chirps/:chirpId

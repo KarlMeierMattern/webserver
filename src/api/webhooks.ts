@@ -16,7 +16,6 @@ export const handlerPolkaEvent = async (req: Request, res: Response) => {
     };
   };
 
-  // Format: Authorization: ApiKey THE_KEY_HERE
   const apiKey = getAPIKey(req);
 
   if (apiKey !== config.webhook.polkaKey) {

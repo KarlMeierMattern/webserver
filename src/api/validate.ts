@@ -8,14 +8,11 @@ export const handlerValidateChirp = (req: Request, res: Response) => {
   const fileteredChirp = filterChirp(body);
 
   if (typeof fileteredChirp !== "string") {
-    res.status(400).json({ error: "Body must be a string" });
-    return;
+    throw new BadRequestError("Body must be a string");
   }
 
   if (fileteredChirp.length > 140) {
     throw new BadRequestError("Chirp is too long. Max length is 140");
-    // res.status(400).json({ error: "Chirp is too long" });
-    // return;
   }
 
   res.status(200).json({ cleanedBody: fileteredChirp });
