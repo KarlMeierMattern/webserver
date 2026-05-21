@@ -29,30 +29,32 @@ npm start
 
 ## API
 
-### `GET /api/healthz`
+### Auth
 
-Readiness check. Returns `200` when the server is up.
+| Method | Path           | Description                                               |
+| ------ | -------------- | --------------------------------------------------------- |
+| `POST` | `/api/login`   | Log in — returns a JWT access token + refresh token       |
+| `POST` | `/api/refresh` | Exchange a refresh token for a new access + refresh token |
+| `POST` | `/api/revoke`  | Revoke a refresh token (logout)                           |
 
-### `POST /api/validate_chirp`
+### Users
 
-Validates and filters a chirp body.
+| Method | Path         | Auth       | Description               |
+| ------ | ------------ | ---------- | ------------------------- |
+| `POST` | `/api/users` | —          | Create a user             |
+| `PUT`  | `/api/users` | Bearer JWT | Update email and password |
 
-**Request:**
+### Chirps
 
-```json
-{ "body": "your chirp text" }
-```
+| Method   | Path              | Auth       | Description                                       |
+| -------- | ----------------- | ---------- | ------------------------------------------------- |
+| `GET`    | `/api/chirps`     | —          | List all chirps (`?authorId=`, `?sort=asc\|desc`) |
+| `GET`    | `/api/chirps/:id` | —          | Get a single chirp                                |
+| `POST`   | `/api/chirps`     | Bearer JWT | Create a chirp (max 140 chars)                    |
+| `DELETE` | `/api/chirps/:id` | Bearer JWT | Delete a chirp (owner only)                       |
 
-**Responses:**
+### Health
 
-- `200` — `{ "cleanedBody": "..." }` — chirp is valid (profanity replaced with `****`)
-- `400` — `{ "error": "Chirp is too long" }` — body exceeds 140 characters
-- `400` — `{ "error": "Invalid JSON in request body" }` — malformed JSON
-
-### `GET /admin/metrics`
-
-Returns request hit count for the `/app` route.
-
-### `POST /admin/reset`
-
-Resets the `/app` route hit counter.
+| Method | Path           | Description     |
+| ------ | -------------- | --------------- |
+| `GET`  | `/api/healthz` | Readiness check |
