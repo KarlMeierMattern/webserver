@@ -19,6 +19,7 @@ type params = {
   email: string;
 };
 
+// POST /api/login
 export const handlerLogin = async (req: Request, res: Response) => {
   const { email, password }: params = req.body;
 
@@ -44,7 +45,11 @@ export const handlerLogin = async (req: Request, res: Response) => {
     throw new UnauthorizedError("Invalid email or password");
   }
 
-  const accessToken = await makeJWT(user.id, 3600, config.jwt.secret);
+  const accessToken = await makeJWT(
+    user.id,
+    config.jwt.defaultDuration,
+    config.jwt.secret
+  );
   const refreshToken = makeRefreshToken();
   await createRefreshToken({
     token: refreshToken,
@@ -64,26 +69,31 @@ export const handlerLogin = async (req: Request, res: Response) => {
   return res.status(200).json(userResponse);
 };
 
+// POST /api/refresh
+// In prod if client detects 401 to route requiring authorisation like POST /api/chirps, calls /api/refresh, gets a new access token
+// Client retries POST /api/chirps with the new token
+// The refresh/retry logic belongs on the client side — this is the standard OAuth2 pattern
 export const handlerRefreshAccessToken = async (
   req: Request,
   res: Response
 ) => {
   const refreshToken = getBearerToken(req); // extract the refresh token
   const tokenCheck = await getValidRefreshToken(refreshToken); // check the token exists in the db
-  // create a new access token
-  // currentlt we are not doing anything with this newly created access token - we simply return it to the client
-  // in prod
+  // create a new access token - in prod, the client would save this new access token to cookies or local storage
   const newAccessToken = await makeJWT(
     tokenCheck.userId,
-    3600,
+    config.jwt.defaultDuration,
     config.jwt.secret
   );
-  res.status(200).json({ token: newAccessToken });
+  await revokeRefreshToken(refreshToken); // revoke access to refreshToken
+  const newRefreshToken = await createNewRefreshToken(tokenCheck.userId); // create new refreshToken
+  res
+    .status(200)
+    .json({ token: newAccessToken, refreshToken: newRefreshToken });
 };
 
-// POST /api/revoke
-// refreshToken is marked revoked
-// accessToken is STILL VALID
+// POST /api/revoke - refreshToken is marked revoked, but accessToken is still valid
+// this endpoint is for explicit logout - we only want to revoke not issue a new token
 export const handlerRevokeRefreshToken = async (
   req: Request,
   res: Response
@@ -92,4 +102,15 @@ export const handlerRevokeRefreshToken = async (
   await getValidRefreshToken(refreshToken); // check the token exists in the db
   await revokeRefreshToken(refreshToken); // revoke the refresh token in the db
   res.status(204).send();
+};
+
+const createNewRefreshToken = async (userId: string) => {
+  const refreshToken = makeRefreshToken();
+  await createRefreshToken({
+    token: refreshToken,
+    userId: userId,
+    expiresAt: new Date(Date.now() + config.jwt.refreshDuration), // 60 days from now
+  });
+
+  return refreshToken;
 };

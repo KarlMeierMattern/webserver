@@ -49,7 +49,7 @@ export const config: Config = {
     migrationConfig: migrationConfig,
   },
   jwt: {
-    defaultDuration: 60 * 60, // 1 hour in seconds
+    defaultDuration: 30, // 30 seconds
     refreshDuration: 60 * 60 * 24 * 60 * 1000, // 60 days in milliseconds
     secret: envOrThrow("JWT_SECRET"),
     issuer: "chirpy",

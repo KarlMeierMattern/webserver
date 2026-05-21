@@ -42,6 +42,7 @@ export const handlerCreateChirp = async (req: Request, res: Response) => {
   res.status(201).json(result);
 };
 
+// GET /api/chirps
 export const handlerGetChirps = async (_req: Request, res: Response) => {
   const result = await getChirps();
 
